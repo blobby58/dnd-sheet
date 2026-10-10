@@ -1,3 +1,4 @@
+
 // gets ability modifier for given stat score
 export function abilityModifier(score: number): number {
     if (score > 30 || score < 1) {
