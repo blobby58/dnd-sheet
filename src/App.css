@@ -1,25 +1,36 @@
 /* ---------- Controls ---------- */
 
+/* Fields are written on a line, like ink on a printed sheet, not boxed like a form. */
 input,
 select,
 textarea {
-  background: var(--sheet);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line-strong);
+  border-radius: 0;
+  padding: 4px 2px;
+  min-width: 0;
+}
+
+select,
+textarea {
+  background: var(--sheet-raised);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 6px 8px;
-  min-width: 0;
 }
 
 input:hover,
 select:hover,
-textarea:hover {
-  border-color: var(--line-strong);
+textarea:hover,
+input:focus {
+  border-color: var(--accent);
 }
 
 input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: var(--teal);
+  accent-color: var(--accent);
   margin: 0;
 }
 
@@ -33,7 +44,8 @@ button {
 }
 
 button:hover:not(:disabled) {
-  background: var(--paper);
+  background: var(--accent-wash);
+  border-color: var(--accent);
 }
 
 button:disabled {
@@ -70,7 +82,10 @@ button.link {
 }
 
 .field-label {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--ink-soft);
 }
 
@@ -145,13 +160,13 @@ button.link {
 }
 
 .dot-proficient {
-  border-color: var(--teal);
-  background: var(--teal);
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
 .dot-expertise {
-  border-color: var(--teal);
-  background: radial-gradient(circle, var(--teal) 35%, var(--sheet) 38%, var(--sheet) 55%, var(--teal) 58%);
+  border-color: var(--accent);
+  background: radial-gradient(circle, var(--accent) 35%, var(--sheet) 38%, var(--sheet) 55%, var(--accent) 58%);
 }
 
 /* ---------- Pips (exhaustion, slots, death saves) ---------- */
@@ -187,8 +202,8 @@ button.link {
 }
 
 .pip.good.on {
-  background: var(--teal);
-  border-color: var(--teal);
+  background: var(--good);
+  border-color: var(--good);
 }
 
 .pip.bad.on {
@@ -206,17 +221,18 @@ button.link {
   padding: 10px 20px;
   background: var(--chrome);
   color: var(--chrome-text);
+  border-bottom: 3px solid var(--accent);
 }
 
 .character-bar .brand {
   font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
+  color: var(--accent);
   margin-right: 8px;
 }
 
 .character-bar select {
-  background: transparent;
+  background: var(--sheet);
   color: var(--chrome-text);
   border-color: color-mix(in srgb, var(--chrome-text) 35%, transparent);
   max-width: 280px;
@@ -263,75 +279,55 @@ button.link {
 
 .identity {
   display: grid;
-  gap: 12px;
-  margin-bottom: 20px;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, 1.6fr);
+  align-items: center;
+  gap: 16px 28px;
+  margin-bottom: 24px;
+  padding: 18px 22px;
+  background: var(--sheet);
+  border: 1px solid var(--line-strong);
+  border-top: 4px solid var(--accent);
+  box-shadow: inset 0 0 0 4px var(--sheet), inset 0 0 0 5px var(--line);
 }
 
 .char-name {
   font-family: var(--serif);
   font-size: clamp(2rem, 5vw, 3.2rem);
-  font-weight: 800;
   line-height: 1.05;
-  border: none;
-  border-bottom: 2px solid var(--line);
-  border-radius: 0;
-  background: transparent;
+  border-bottom: 2px solid var(--accent);
   padding: 0 0 6px;
   width: 100%;
 }
 
-.char-name:hover,
-.char-name:focus {
-  border-bottom-color: var(--ink);
-}
-
+/* Like a printed sheet: the value sits on the line, the label is printed under it. */
 .identity-fields {
   display: grid;
-  grid-template-columns: 2fr 0.7fr 1.5fr 1.5fr 1.2fr 1.6fr;
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 18px;
+}
+
+.identity-fields .field {
+  flex-direction: column-reverse;
+}
+
+.identity-fields input {
+  font-weight: 700;
 }
 
 .level-up {
+  grid-column: 1 / -1;
   background: var(--brass-wash);
   border-left: 3px solid var(--brass);
   padding: 8px 12px;
-}
-
-/* ---------- Tabs ---------- */
-
-.tabs {
-  display: flex;
-  gap: 4px;
-  border-bottom: 2px solid var(--line);
-  margin-bottom: 20px;
-  overflow-x: auto;
-}
-
-.tabs button {
-  border: none;
-  border-radius: 0;
-  padding: 10px 16px;
-  margin-bottom: -2px;
-  border-bottom: 3px solid transparent;
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-
-.tabs button.active {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
-  font-weight: 700;
 }
 
 /* ---------- Panels ---------- */
 
 .panel {
   background: var(--sheet);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 16px;
+  border: 1px solid var(--line-strong);
+  box-shadow: inset 0 0 0 4px var(--sheet), inset 0 0 0 5px var(--line);
+  padding: 16px 18px 18px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -343,10 +339,15 @@ button.link {
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--accent);
 }
 
 .panel-head h2 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .stack {
@@ -358,11 +359,30 @@ button.link {
 
 /* ---------- Overview ---------- */
 
-.overview {
+/* One page, read top to bottom: main stats down the left, everything else flows on the right. */
+.sheet-body {
   display: grid;
-  grid-template-columns: minmax(220px, 0.9fr) minmax(260px, 1fr) minmax(280px, 1.1fr);
+  grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
   gap: 16px;
   align-items: start;
+}
+
+.sheet-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.status {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.conditions-panel {
+  grid-column: 1 / -1;
 }
 
 .abilities {
@@ -370,37 +390,41 @@ button.link {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
 
+/* The classic ability block: name on top, big modifier, score in an oval below. */
 .ability {
   display: grid;
-  grid-template-columns: 1fr auto;
   grid-template-areas:
-    "name score"
-    "mod score"
-    "save save";
-  align-items: center;
-  column-gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+    "name"
+    "mod"
+    "score"
+    "save";
+  justify-items: center;
+  text-align: center;
+  padding: 10px 8px 8px;
+  background: var(--sheet-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px 10px 18px 18px;
 }
 
 .ability-name {
   grid-area: name;
-  font-family: var(--serif);
+  font-size: 0.72rem;
   font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
 }
 
 .ability-mod {
   grid-area: mod;
-  justify-self: start;
   font-family: var(--serif);
-  font-size: 2rem;
+  font-size: 2.4rem;
   line-height: 1.1;
-  padding: 0 4px;
-  margin-left: -4px;
+  padding: 0 6px;
 }
 
 .ability-score {
@@ -408,21 +432,26 @@ button.link {
 }
 
 .ability-score input {
-  width: 3.4em;
+  width: 3.2em;
   text-align: center;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--sheet);
+  padding: 2px 4px;
 }
 
 .save {
   grid-area: save;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-top: 8px;
-  margin-top: 6px;
-  border-top: 1px dashed var(--line);
-  font-size: 0.95rem;
+  gap: 6px;
+  width: 100%;
+  padding-top: 6px;
+  margin-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem;
 }
 
 .save .roll {
@@ -485,7 +514,7 @@ button.link {
 }
 
 .hp-temp {
-  color: var(--teal);
+  color: var(--brass);
   font-weight: 700;
 }
 
@@ -493,13 +522,14 @@ button.link {
   height: 8px;
   border-radius: 4px;
   background: var(--paper);
+  border: 1px solid var(--line);
   overflow: hidden;
 }
 
 .hp-bar span {
   display: block;
   height: 100%;
-  background: var(--teal);
+  background: var(--accent);
   transition: width 0.3s ease;
 }
 
@@ -530,19 +560,34 @@ button.link {
 
 .vital {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  align-items: flex-start;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 4px;
+  align-items: center;
+  text-align: center;
+  padding: 10px 6px;
+  background: var(--sheet-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.vital .field {
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 4px;
 }
 
 .vital .field input {
-  width: 5em;
-  font-weight: 700;
+  width: 3.6em;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  border-bottom-color: transparent;
 }
 
-.vital .roll.big {
-  padding: 0 4px;
-  margin-left: -4px;
+.vital .field input:hover,
+.vital .field input:focus {
+  border-bottom-color: var(--accent);
 }
 
 .chips {
@@ -590,7 +635,9 @@ button.link {
 }
 
 .attack {
+  background: var(--sheet-raised);
   border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius);
   padding: 10px 12px;
 }
@@ -649,7 +696,7 @@ button.link {
 }
 
 .death-status.stable {
-  color: var(--teal);
+  color: var(--good);
 }
 
 .death-row {
@@ -659,6 +706,19 @@ button.link {
 }
 
 /* ---------- Spells ---------- */
+
+/* The spells column is narrow: the ability picker gets its own row so long names fit. */
+.casting-panel .vitals {
+  grid-template-columns: 1fr 1fr;
+}
+
+.casting-panel .vital:first-child {
+  grid-column: 1 / -1;
+}
+
+.casting-panel select {
+  width: 100%;
+}
 
 .spells-layout {
   display: grid;
@@ -765,11 +825,13 @@ button.link {
 
 .items th {
   text-align: left;
-  font-weight: 500;
-  font-size: 0.8rem;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--ink-soft);
   padding: 4px 6px;
-  border-bottom: 1px solid var(--line-strong);
+  border-bottom: 2px solid var(--accent);
 }
 
 .items td {
@@ -813,7 +875,10 @@ button.link {
 }
 
 .textarea h2 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .textarea textarea {
@@ -838,6 +903,7 @@ button.link {
   width: min(720px, calc(100% - 24px));
   background: var(--chrome);
   color: var(--chrome-text);
+  border: 1px solid var(--accent);
   border-radius: 12px;
   box-shadow: 0 12px 32px -8px rgb(0 0 0 / 0.45);
   z-index: 10;
@@ -971,6 +1037,7 @@ button.link {
 .custom input {
   flex: 1;
   background: transparent;
+  border: 1px solid;
   color: var(--chrome-text);
   border-color: color-mix(in srgb, var(--chrome-text) 30%, transparent);
 }
@@ -1019,16 +1086,14 @@ button.link {
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1080px) {
-  .overview {
-    grid-template-columns: 1fr 1fr;
+  .sheet-body {
+    grid-template-columns: 1fr;
   }
-  .overview > .stack {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
-  .identity-fields {
+  .abilities {
     grid-template-columns: repeat(3, 1fr);
+  }
+  .identity {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1036,14 +1101,14 @@ button.link {
   .sheet {
     padding: 16px 16px 140px;
   }
-  .overview,
+  .status,
   .combat,
   .spells-layout,
   .inventory {
     grid-template-columns: 1fr;
   }
-  .abilities {
-    grid-template-columns: 1fr 1fr;
+  .identity {
+    padding: 14px 16px;
   }
   .identity-fields {
     grid-template-columns: 1fr 1fr;
@@ -1083,7 +1148,7 @@ button.link {
 
 @media (max-width: 420px) {
   .abilities {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   .hp-change {
     grid-template-columns: 1fr 1fr 1fr;
@@ -1098,7 +1163,6 @@ button.link {
 @media print {
   .character-bar,
   .tray,
-  .tabs,
   .hp-change,
   .hint,
   .footer,
@@ -1109,7 +1173,15 @@ button.link {
   :root {
     --paper: #fff;
     --sheet: #fff;
+    --sheet-raised: #fff;
     --ink: #000;
+    --ink-soft: #444;
+    --line: #bbb;
+    --line-strong: #666;
+    --accent: #8e1b1f;
+  }
+  body {
+    background: #fff;
   }
   .sheet {
     padding: 0;

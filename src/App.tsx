@@ -1,25 +1,15 @@
-import { useState } from "react";
 import { useCharacters } from "./useCharacters";
 import { experienceForNextLevel, levelForExperience } from "./rules";
 import { CharacterBar } from "./components/CharacterBar";
 import { DiceProvider } from "./components/DiceTray";
 import { NumberField, TextField } from "./components/fields";
-import { OverviewTab } from "./components/OverviewTab";
+import { MainStats, Status } from "./components/OverviewTab";
 import { CombatTab } from "./components/CombatTab";
 import { SpellsTab } from "./components/SpellsTab";
 import { InventoryTab } from "./components/InventoryTab";
 import { NotesTab } from "./components/NotesTab";
 import { setField, type SheetProps } from "./components/sheetProps";
 import "./App.css";
-
-const TABS = [
-  { id: "overview", label: "Overview", Component: OverviewTab },
-  { id: "combat", label: "Combat", Component: CombatTab },
-  { id: "spells", label: "Spells", Component: SpellsTab },
-  { id: "inventory", label: "Inventory", Component: InventoryTab },
-  { id: "notes", label: "Notes", Component: NotesTab },
-] as const;
-type TabId = (typeof TABS)[number]["id"];
 
 function Identity({ c, update }: SheetProps) {
   const xpLevel = levelForExperience(c.experience);
@@ -73,8 +63,6 @@ function Identity({ c, update }: SheetProps) {
 
 export default function App() {
   const { characters, active, updateActive, select, add, duplicate, remove } = useCharacters();
-  const [tab, setTab] = useState<TabId>("overview");
-  const current = TABS.find((t) => t.id === tab) ?? TABS[0];
   const props: SheetProps = { c: active, update: updateActive };
 
   return (
@@ -90,25 +78,18 @@ export default function App() {
       />
       <main className="sheet">
         <Identity {...props} />
-        <div className="tabs" role="tablist" aria-label="Sheet sections">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              id={`tab-${t.id}`}
-              type="button"
-              role="tab"
-              aria-selected={tab === t.id}
-              aria-controls="tab-panel"
-              className={tab === t.id ? "active" : ""}
-              onClick={() => setTab(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <div id="tab-panel" role="tabpanel" aria-labelledby={`tab-${current.id}`}>
-          {/* key resets per-tab form state when switching characters */}
-          <current.Component key={active.id} {...props} />
+        {/* key resets per-section form state when switching characters */}
+        <div className="sheet-body" key={active.id}>
+          <aside className="main-stats">
+            <MainStats {...props} />
+          </aside>
+          <div className="sheet-flow">
+            <Status {...props} />
+            <CombatTab {...props} />
+            <SpellsTab {...props} />
+            <InventoryTab {...props} />
+            <NotesTab {...props} />
+          </div>
         </div>
         <footer className="footer">
           Saved automatically in this browser. Rules content from the D&amp;D 5e System Reference

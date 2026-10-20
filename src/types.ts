@@ -216,11 +216,11 @@ export function emptySpellSlots(): SpellSlot[] {
 export function createCharacter(overrides: Partial<Character> = {}): Character {
   return {
     id: newId(),
-    name: "New Adventurer",
-    className: "Fighter",
-    species: "",
-    background: "",
-    alignment: "",
+    name: "Nameless??",
+    className: "Classless??",
+    species: "Raceless??",
+    background: "Homeless??",
+    alignment: "Confused??",
     level: 1,
     experience: 0,
     abilityScores: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
