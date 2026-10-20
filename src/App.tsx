@@ -1,114 +1,120 @@
-import { useLocalStorage } from "./useLocalStorage";
-import {
-  ABILITIES,
-  ABILITY_NAMES,
-  defaultCharacter,
-  type Ability,
-  type Character,
-} from "./types";
-import { abilityModifier, formatModifier, proficiencyBonus } from "./rules";
+import { useState } from "react";
+import { useCharacters } from "./useCharacters";
+import { experienceForNextLevel, levelForExperience } from "./rules";
+import { CharacterBar } from "./components/CharacterBar";
+import { DiceProvider } from "./components/DiceTray";
+import { NumberField, TextField } from "./components/fields";
+import { OverviewTab } from "./components/OverviewTab";
+import { CombatTab } from "./components/CombatTab";
+import { SpellsTab } from "./components/SpellsTab";
+import { InventoryTab } from "./components/InventoryTab";
+import { NotesTab } from "./components/NotesTab";
+import { setField, type SheetProps } from "./components/sheetProps";
 import "./App.css";
 
-export default function App() {
-  const [character, setCharacter] = useLocalStorage<Character>(
-    "character",
-    defaultCharacter
+const TABS = [
+  { id: "overview", label: "Overview", Component: OverviewTab },
+  { id: "combat", label: "Combat", Component: CombatTab },
+  { id: "spells", label: "Spells", Component: SpellsTab },
+  { id: "inventory", label: "Inventory", Component: InventoryTab },
+  { id: "notes", label: "Notes", Component: NotesTab },
+] as const;
+type TabId = (typeof TABS)[number]["id"];
+
+function Identity({ c, update }: SheetProps) {
+  const xpLevel = levelForExperience(c.experience);
+  const next = experienceForNextLevel(c.level);
+  return (
+    <header className="identity">
+      <label htmlFor="char-name" className="sr-only">
+        Character name
+      </label>
+      <input
+        id="char-name"
+        className="char-name"
+        value={c.name}
+        placeholder="Character name"
+        onChange={(e) => setField(update, "name", e.target.value)}
+      />
+      <div className="identity-fields">
+        <TextField label="Class" value={c.className} onChange={(v) => setField(update, "className", v)} />
+        <NumberField
+          label="Level"
+          className="narrow"
+          value={c.level}
+          min={1}
+          max={20}
+          onChange={(v) =>
+            update((prev) => ({ ...prev, level: v, hitDiceUsed: Math.min(prev.hitDiceUsed, v) }))
+          }
+        />
+        <TextField label="Species" value={c.species} onChange={(v) => setField(update, "species", v)} />
+        <TextField label="Background" value={c.background} onChange={(v) => setField(update, "background", v)} />
+        <TextField label="Alignment" value={c.alignment} onChange={(v) => setField(update, "alignment", v)} />
+        <NumberField
+          label={next === null ? "Experience" : `Experience (next: ${next.toLocaleString()})`}
+          value={c.experience}
+          min={0}
+          max={10_000_000}
+          onChange={(v) => setField(update, "experience", v)}
+        />
+      </div>
+      {xpLevel > c.level && (
+        <p className="level-up">
+          You have enough experience for level {xpLevel}.{" "}
+          <button type="button" className="link" onClick={() => setField(update, "level", xpLevel)}>
+            Level up to {xpLevel}
+          </button>
+        </p>
+      )}
+    </header>
   );
+}
 
-  // Generic updater: `field` must be a key of Character, and `value`
-  // must match that field's type. TypeScript checks this for you.
-  function update<K extends keyof Character>(field: K, value: Character[K]) {
-    setCharacter((prev) => ({ ...prev, [field]: value }));
-  }
-
-  function updateScore(ability: Ability, score: number) {
-    setCharacter((prev) => ({
-      ...prev,
-      abilityScores: { ...prev.abilityScores, [ability]: score },
-    }));
-  }
-
-  const prof = proficiencyBonus(character.level);
-  const initiative = abilityModifier(character.abilityScores.dex);
+export default function App() {
+  const { characters, active, updateActive, select, add, duplicate, remove } = useCharacters();
+  const [tab, setTab] = useState<TabId>("overview");
+  const current = TABS.find((t) => t.id === tab) ?? TABS[0];
+  const props: SheetProps = { c: active, update: updateActive };
 
   return (
-    <main className="sheet">
-      <header className="header">
-        <input
-          className="name"
-          value={character.name}
-          onChange={(e) => update("name", e.target.value)}
-        />
-        <label>
-          Class
-          <input
-            value={character.className}
-            onChange={(e) => update("className", e.target.value)}
-          />
-        </label>
-        <label>
-          Level
-          <input
-            type="number"
-            min={1}
-            max={20}
-            value={character.level}
-            onChange={(e) => update("level", Number(e.target.value))}
-          />
-        </label>
-      </header>
-
-      <section className="abilities">
-        {ABILITIES.map((ability) => {
-          const score = character.abilityScores[ability];
-          return (
-            <div key={ability} className="ability">
-              <span className="ability-name">{ABILITY_NAMES[ability]}</span>
-              <span className="modifier">
-                {formatModifier(abilityModifier(score))}
-              </span>
-              <input
-                type="number"
-                min={1}
-                max={30}
-                value={score}
-                onChange={(e) => updateScore(ability, Number(e.target.value))}
-              />
-            </div>
-          );
-        })}
-      </section>
-
-      <section className="stats">
-        <div className="stat">
-          <span>Proficiency</span>
-          <strong>{formatModifier(prof)}</strong>
+    <DiceProvider>
+      <CharacterBar
+        characters={characters}
+        active={active}
+        onSelect={select}
+        onNew={() => add()}
+        onDuplicate={duplicate}
+        onDelete={remove}
+        onImport={add}
+      />
+      <main className="sheet">
+        <Identity {...props} />
+        <div className="tabs" role="tablist" aria-label="Sheet sections">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              id={`tab-${t.id}`}
+              type="button"
+              role="tab"
+              aria-selected={tab === t.id}
+              aria-controls="tab-panel"
+              className={tab === t.id ? "active" : ""}
+              onClick={() => setTab(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
-        <div className="stat">
-          <span>Initiative</span>
-          <strong>{formatModifier(initiative)}</strong>
+        <div id="tab-panel" role="tabpanel" aria-labelledby={`tab-${current.id}`}>
+          {/* key resets per-tab form state when switching characters */}
+          <current.Component key={active.id} {...props} />
         </div>
-        <div className="stat">
-          <span>HP</span>
-          <div className="hp">
-            <input
-              type="number"
-              value={character.currentHp}
-              onChange={(e) => update("currentHp", Number(e.target.value))}
-            />
-            /
-            <input
-              type="number"
-              value={character.maxHp}
-              onChange={(e) => update("maxHp", Number(e.target.value))}
-            />
-          </div>
-        </div>
-      </section>
-
-      <button onClick={() => setCharacter(defaultCharacter)}>
-        Reset character
-      </button>
-    </main>
+        <footer className="footer">
+          Saved automatically in this browser. Rules content from the D&amp;D 5e System Reference
+          Document, licensed under CC-BY-4.0.
+        </footer>
+      </main>
+    </DiceProvider>
   );
 }
