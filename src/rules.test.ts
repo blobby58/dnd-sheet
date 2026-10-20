@@ -70,3 +70,8 @@ describe("formatModifier", () => {
     expect(typeof formatModifier(2)).toBe("string");
   });
 });
+describe("formatModifier input checks", () => {
+  it("throws RangeError for a non-integer modifier", () => {
+    expect(() => formatModifier(1.5)).toThrow(RangeError);
+  });
+});
