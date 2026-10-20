@@ -9,6 +9,7 @@ import {
   type Character,
   type Item,
   type Skill,
+  type SrdClass,
   type Training,
 } from "./types";
 
@@ -225,4 +226,33 @@ export function levelForExperience(xp: number): number {
 
 export function experienceForNextLevel(level: number): number | null {
   return level >= 20 ? null : XP_THRESHOLDS[level];
+}
+
+// --- Class defaults ----------------------------------------------------------
+
+export interface ClassDefaultChanges {
+  hitDie: boolean;
+  savingThrows: boolean;
+}
+
+// What picking this class would change, or null if the sheet already matches.
+export function classDefaultChanges(
+  character: Character,
+  cls: SrdClass
+): ClassDefaultChanges | null {
+  const current = new Set(character.savingThrowProficiencies);
+  const changes = {
+    hitDie: character.hitDieSides !== cls.hitDie,
+    savingThrows:
+      current.size !== cls.savingThrows.length || cls.savingThrows.some((a) => !current.has(a)),
+  };
+  return changes.hitDie || changes.savingThrows ? changes : null;
+}
+
+export function applyClassDefaults(character: Character, cls: SrdClass): Character {
+  return {
+    ...character,
+    hitDieSides: cls.hitDie,
+    savingThrowProficiencies: [...cls.savingThrows],
+  };
 }

@@ -798,6 +798,81 @@ button.link {
   background: var(--sheet);
 }
 
+/* ---------- Class & feats ---------- */
+
+.class-picker {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.class-picker select,
+.class-picker input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.class-offer {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  background: var(--accent-wash);
+  border-left: 3px solid var(--accent);
+  padding: 8px 12px;
+}
+
+.feat-adders {
+  display: grid;
+  gap: 8px;
+}
+
+.feat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.feat {
+  display: grid;
+  gap: 6px;
+  background: var(--sheet-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+
+.feat-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.feat-head h3,
+.feat-name {
+  flex: 1;
+  font-size: 1.1rem;
+}
+
+.feat-name {
+  font-family: var(--serif);
+}
+
+.feat-benefits {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 4px;
+}
+
+.feat textarea {
+  resize: vertical;
+}
+
 /* ---------- Inventory ---------- */
 
 .inventory {
@@ -891,6 +966,13 @@ button.link {
   margin-top: 32px;
   color: var(--ink-soft);
   font-size: 0.8rem;
+  display: grid;
+  gap: 6px;
+}
+
+.footer a {
+  color: inherit;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- Dice tray ---------- */

@@ -87,6 +87,31 @@ describe("normalizeCharacter", () => {
   });
 });
 
+describe("feats", () => {
+  it("loads a save from before feats existed, keeping a homebrew class", () => {
+    const c = normalizeCharacter({ name: "Vex", className: "Blood Hunter", level: 3 });
+    expect(c.className).toBe("Blood Hunter");
+    expect(c.feats).toEqual([]);
+  });
+
+  it("keeps SRD and custom feats and drops junk", () => {
+    const c = normalizeCharacter({
+      feats: [
+        { id: "a", name: "Grappler", srdKey: "srd_grappler", notes: "" },
+        { name: "Lucky", srdKey: null, notes: "Reroll 3 times a day" },
+        { name: "Odd", srdKey: 42 },
+        "not a feat",
+        null,
+      ],
+    });
+    expect(c.feats).toHaveLength(3);
+    expect(c.feats[0]).toEqual({ id: "a", name: "Grappler", srdKey: "srd_grappler", notes: "" });
+    expect(c.feats[1]).toMatchObject({ name: "Lucky", srdKey: null, notes: "Reroll 3 times a day" });
+    expect(c.feats[1].id).not.toBe("");
+    expect(c.feats[2]).toMatchObject({ name: "Odd", srdKey: null, notes: "" });
+  });
+});
+
 describe("normalizeState", () => {
   it("always has at least one character", () => {
     expect(normalizeState({ characters: [] }).characters).toHaveLength(1);
