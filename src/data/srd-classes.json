@@ -1,0 +1,110 @@
+[
+  {
+    "key": "srd_barbarian",
+    "name": "Barbarian",
+    "hitDie": 12,
+    "savingThrows": [
+      "con",
+      "str"
+    ]
+  },
+  {
+    "key": "srd_bard",
+    "name": "Bard",
+    "hitDie": 8,
+    "savingThrows": [
+      "cha",
+      "dex"
+    ]
+  },
+  {
+    "key": "srd_cleric",
+    "name": "Cleric",
+    "hitDie": 8,
+    "savingThrows": [
+      "cha",
+      "wis"
+    ]
+  },
+  {
+    "key": "srd_druid",
+    "name": "Druid",
+    "hitDie": 8,
+    "savingThrows": [
+      "int",
+      "wis"
+    ]
+  },
+  {
+    "key": "srd_fighter",
+    "name": "Fighter",
+    "hitDie": 10,
+    "savingThrows": [
+      "con",
+      "str"
+    ]
+  },
+  {
+    "key": "srd_monk",
+    "name": "Monk",
+    "hitDie": 8,
+    "savingThrows": [
+      "dex",
+      "str"
+    ]
+  },
+  {
+    "key": "srd_paladin",
+    "name": "Paladin",
+    "hitDie": 10,
+    "savingThrows": [
+      "cha",
+      "wis"
+    ]
+  },
+  {
+    "key": "srd_ranger",
+    "name": "Ranger",
+    "hitDie": 10,
+    "savingThrows": [
+      "dex",
+      "str"
+    ]
+  },
+  {
+    "key": "srd_rogue",
+    "name": "Rogue",
+    "hitDie": 8,
+    "savingThrows": [
+      "dex",
+      "int"
+    ]
+  },
+  {
+    "key": "srd_sorcerer",
+    "name": "Sorcerer",
+    "hitDie": 6,
+    "savingThrows": [
+      "cha",
+      "con"
+    ]
+  },
+  {
+    "key": "srd_warlock",
+    "name": "Warlock",
+    "hitDie": 8,
+    "savingThrows": [
+      "cha",
+      "wis"
+    ]
+  },
+  {
+    "key": "srd_wizard",
+    "name": "Wizard",
+    "hitDie": 6,
+    "savingThrows": [
+      "int",
+      "wis"
+    ]
+  }
+]

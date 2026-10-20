@@ -158,6 +158,31 @@ export interface Item {
   notes: string;
 }
 
+// A feat on the sheet. SRD feats store their key and get their text from
+// src/data; custom feats keep their description in `notes`.
+export interface CharacterFeat {
+  id: string;
+  name: string;
+  srdKey: string | null;
+  notes: string;
+}
+
+// Trimmed SRD 5.1 data, written by scripts/fetch-srd.ts into src/data/.
+export interface SrdClass {
+  key: string;
+  name: string;
+  hitDie: HitDieSides;
+  savingThrows: Ability[];
+}
+
+export interface SrdFeat {
+  key: string;
+  name: string;
+  prerequisite: string | null;
+  desc: string;
+  benefits: string[];
+}
+
 export interface Character {
   id: string;
   name: string;
@@ -196,7 +221,8 @@ export interface Character {
   currency: Record<Currency, number>;
 
   otherProficiencies: string; // armour, weapons, tools, languages
-  features: string; // class & species features, feats
+  feats: CharacterFeat[];
+  features: string; // class & species features
   notes: string;
 
   updatedAt: number;
@@ -216,11 +242,11 @@ export function emptySpellSlots(): SpellSlot[] {
 export function createCharacter(overrides: Partial<Character> = {}): Character {
   return {
     id: newId(),
-    name: "New Adventurer",
-    className: "Fighter",
-    species: "",
-    background: "",
-    alignment: "",
+    name: "Nameless??",
+    className: "Classless??",
+    species: "Raceless??",
+    background: "Homeless??",
+    alignment: "Confused??",
     level: 1,
     experience: 0,
     abilityScores: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
@@ -245,6 +271,7 @@ export function createCharacter(overrides: Partial<Character> = {}): Character {
     inventory: [],
     currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     otherProficiencies: "",
+    feats: [],
     features: "",
     notes: "",
     updatedAt: Date.now(),

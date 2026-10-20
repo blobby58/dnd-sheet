@@ -1,55 +1,37 @@
-/* Design tokens. Slate paper and navy ink, like a dungeon map:
-   teal marks proficiency, red marks harm, brass marks dice. */
+/* Design tokens. Candlelit study: dark walnut and warm parchment ink.
+   Copper marks proficiency and headings, red marks harm, brass marks dice. */
 :root {
-  --paper: #e9edf1;
-  --sheet: #f8fafb;
-  --ink: #18222d;
-  --ink-soft: #4a5867;
-  --line: #c8d1da;
-  --line-strong: #8e9cab;
-  --teal: #1f6f6a;
-  --teal-wash: #d8ebe8;
-  --red: #a8322a;
-  --red-wash: #f5dedb;
-  --amber: #a2631c;
-  --brass: #8a6714;
-  --brass-wash: #f3ead2;
-  --focus: #2c5fa8;
-  --chrome: #18222d;
-  --chrome-text: #e9edf1;
+  --paper: #1e1915;
+  --sheet: #2a231d;
+  --sheet-raised: #342b24;
+  --ink: #f3e8d6;
+  --ink-soft: #bfae97;
+  --line: #4b3f34;
+  --line-strong: #7a6852;
+  --accent: #e0956a;
+  --accent-wash: #4a3226;
+  --red: #ef7564;
+  --red-wash: #4d2a24;
+  --good: #a9c587;
+  --amber: #e9b45e;
+  --brass: #e6c070;
+  --brass-wash: #45381f;
+  --focus: #f4d58d;
+  --chrome: #16120f;
+  --chrome-text: #f3e8d6;
 
-  --serif: "Alegreya", Georgia, "Times New Roman", serif;
-  --sans: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --serif: "MedievalSharp", Georgia, "Times New Roman", serif;
+  --sans: "Lato", "Segoe UI", system-ui, sans-serif;
 
-  --radius-sm: 4px;
-  --radius: 8px;
+  --radius-sm: 3px;
+  --radius: 4px;
 
-  color-scheme: light dark;
+  color-scheme: dark;
   font: 17px/1.45 var(--sans);
   color: var(--ink);
   background: var(--paper);
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #0f161d;
-    --sheet: #17212b;
-    --ink: #e3e9ef;
-    --ink-soft: #97a6b5;
-    --line: #2b3845;
-    --line-strong: #4b5b6b;
-    --teal: #5cbcb1;
-    --teal-wash: #183634;
-    --red: #e3695e;
-    --red-wash: #3a1d1b;
-    --amber: #e0a050;
-    --brass: #d9ae52;
-    --brass-wash: #33291a;
-    --focus: #7fb0f5;
-    --chrome: #26333f;
-  }
 }
 
 *,
@@ -61,7 +43,9 @@
 body {
   margin: 0;
   min-height: 100svh;
-  background: var(--paper);
+  background:
+    radial-gradient(ellipse at top, #3a2a1c 0%, transparent 60%) no-repeat,
+    var(--paper);
 }
 
 h1,

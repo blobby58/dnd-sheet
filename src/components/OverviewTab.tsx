@@ -325,16 +325,22 @@ function Conditions({ c, update }: SheetProps) {
   );
 }
 
-export function OverviewTab(props: SheetProps) {
+// The left column: what you look up most, so it never moves.
+export function MainStats(props: SheetProps) {
   return (
-    <div className="overview">
+    <div className="stack">
       <Abilities {...props} />
       <Skills {...props} />
-      <div className="stack">
-        <HitPoints {...props} />
-        <Vitals {...props} />
-        <Conditions {...props} />
-      </div>
+    </div>
+  );
+}
+
+export function Status(props: SheetProps) {
+  return (
+    <div className="status">
+      <HitPoints {...props} />
+      <Vitals {...props} />
+      <Conditions {...props} />
     </div>
   );
 }

@@ -1,11 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { createCharacter, type Attack, type Character } from "./types";
+import { createCharacter, type Attack, type Character, type SrdClass } from "./types";
 import {
+  applyClassDefaults,
   applyDamage,
   applyHealing,
   attackBonus,
   carryingCapacity,
   clampInt,
+  classDefaultChanges,
   damageFormula,
   experienceForNextLevel,
   hitDiceRemaining,
@@ -207,5 +209,34 @@ describe("experience", () => {
   it("knows the next threshold", () => {
     expect(experienceForNextLevel(1)).toBe(300);
     expect(experienceForNextLevel(20)).toBeNull();
+  });
+});
+
+describe("class defaults", () => {
+  const wizard: SrdClass = { key: "srd_wizard", name: "Wizard", hitDie: 6, savingThrows: ["int", "wis"] };
+
+  it("reports what picking a class would change", () => {
+    const c = createCharacter({ hitDieSides: 10, savingThrowProficiencies: ["str"] });
+    expect(classDefaultChanges(c, wizard)).toEqual({ hitDie: true, savingThrows: true });
+  });
+
+  it("reports nothing when the sheet already matches, in any save order", () => {
+    const c = createCharacter({ hitDieSides: 6, savingThrowProficiencies: ["wis", "int"] });
+    expect(classDefaultChanges(c, wizard)).toBeNull();
+  });
+
+  it("notices an extra saving throw", () => {
+    const c = createCharacter({ hitDieSides: 6, savingThrowProficiencies: ["int", "wis", "con"] });
+    expect(classDefaultChanges(c, wizard)).toEqual({ hitDie: false, savingThrows: true });
+  });
+
+  it("applies hit die and saves, leaving everything else alone", () => {
+    const c = createCharacter({ hitDieSides: 12, savingThrowProficiencies: ["str"], level: 5, hitDiceUsed: 2 });
+    const next = applyClassDefaults(c, wizard);
+    expect(next.hitDieSides).toBe(6);
+    expect(next.savingThrowProficiencies).toEqual(["int", "wis"]);
+    expect(next.hitDiceUsed).toBe(2);
+    expect(next.level).toBe(5);
+    expect(next.savingThrowProficiencies).not.toBe(wizard.savingThrows);
   });
 });

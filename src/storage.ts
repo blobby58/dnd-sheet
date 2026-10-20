@@ -17,6 +17,7 @@ import {
   type Ability,
   type Attack,
   type Character,
+  type CharacterFeat,
   type Condition,
   type HitDieSides,
   type Item,
@@ -95,6 +96,16 @@ function normalizeSpell(value: unknown): Spell | null {
     level: clampInt(value.level, 0, 9, 0),
     prepared: bool(value.prepared),
     notes: str(value.notes, "", 2000),
+  };
+}
+
+function normalizeFeat(value: unknown): CharacterFeat | null {
+  if (!isObject(value)) return null;
+  return {
+    id: str(value.id) || newId(),
+    name: str(value.name, "", 200),
+    srdKey: typeof value.srdKey === "string" && value.srdKey !== "" ? value.srdKey.slice(0, 200) : null,
+    notes: str(value.notes, "", 5000),
   };
 }
 
@@ -187,6 +198,7 @@ export function normalizeCharacter(value: unknown): Character {
     currency: Object.fromEntries(
       CURRENCIES.map((c) => [c, clampInt(currency[c], 0, 1e9, 0)])
     ) as Character["currency"],
+    feats: arrayOf(raw.feats, normalizeFeat),
     otherProficiencies: str(raw.otherProficiencies),
     features: str(raw.features),
     notes: str(raw.notes),

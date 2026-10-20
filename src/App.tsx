@@ -1,10 +1,18 @@
 import { useState } from "react";
 import { useCharacters } from "./useCharacters";
-import { experienceForNextLevel, levelForExperience } from "./rules";
+import {
+  applyClassDefaults,
+  classDefaultChanges,
+  experienceForNextLevel,
+  levelForExperience,
+} from "./rules";
+import { ABILITY_NAMES, type SrdClass } from "./types";
 import { CharacterBar } from "./components/CharacterBar";
 import { DiceProvider } from "./components/DiceTray";
 import { NumberField, TextField } from "./components/fields";
-import { OverviewTab } from "./components/OverviewTab";
+import { ClassField } from "./components/ClassField";
+import { Feats } from "./components/Feats";
+import { MainStats, Status } from "./components/OverviewTab";
 import { CombatTab } from "./components/CombatTab";
 import { SpellsTab } from "./components/SpellsTab";
 import { InventoryTab } from "./components/InventoryTab";
@@ -12,18 +20,12 @@ import { NotesTab } from "./components/NotesTab";
 import { setField, type SheetProps } from "./components/sheetProps";
 import "./App.css";
 
-const TABS = [
-  { id: "overview", label: "Overview", Component: OverviewTab },
-  { id: "combat", label: "Combat", Component: CombatTab },
-  { id: "spells", label: "Spells", Component: SpellsTab },
-  { id: "inventory", label: "Inventory", Component: InventoryTab },
-  { id: "notes", label: "Notes", Component: NotesTab },
-] as const;
-type TabId = (typeof TABS)[number]["id"];
-
 function Identity({ c, update }: SheetProps) {
   const xpLevel = levelForExperience(c.experience);
   const next = experienceForNextLevel(c.level);
+  // The SRD class just picked; we offer its defaults rather than overwrite.
+  const [picked, setPicked] = useState<SrdClass | null>(null);
+  const changes = picked && classDefaultChanges(c, picked);
   return (
     <header className="identity">
       <label htmlFor="char-name" className="sr-only">
@@ -37,7 +39,14 @@ function Identity({ c, update }: SheetProps) {
         onChange={(e) => setField(update, "name", e.target.value)}
       />
       <div className="identity-fields">
-        <TextField label="Class" value={c.className} onChange={(v) => setField(update, "className", v)} />
+        <ClassField
+          value={c.className}
+          onChange={(v) => {
+            setField(update, "className", v);
+            setPicked(null);
+          }}
+          onPickSrd={setPicked}
+        />
         <NumberField
           label="Level"
           className="narrow"
@@ -59,6 +68,31 @@ function Identity({ c, update }: SheetProps) {
           onChange={(v) => setField(update, "experience", v)}
         />
       </div>
+      {picked && changes && (
+        <p className="class-offer">
+          Use {picked.name} defaults:{" "}
+          {[
+            changes.hitDie && `d${picked.hitDie} hit die`,
+            changes.savingThrows &&
+              `${picked.savingThrows.map((a) => ABILITY_NAMES[a]).join(" & ")} saves`,
+          ]
+            .filter(Boolean)
+            .join(", ")}
+          ?{" "}
+          <button
+            type="button"
+            onClick={() => {
+              update((prev) => applyClassDefaults(prev, picked));
+              setPicked(null);
+            }}
+          >
+            Apply
+          </button>{" "}
+          <button type="button" className="link" onClick={() => setPicked(null)}>
+            Keep mine
+          </button>
+        </p>
+      )}
       {xpLevel > c.level && (
         <p className="level-up">
           You have enough experience for level {xpLevel}.{" "}
@@ -73,8 +107,6 @@ function Identity({ c, update }: SheetProps) {
 
 export default function App() {
   const { characters, active, updateActive, select, add, duplicate, remove } = useCharacters();
-  const [tab, setTab] = useState<TabId>("overview");
-  const current = TABS.find((t) => t.id === tab) ?? TABS[0];
   const props: SheetProps = { c: active, update: updateActive };
 
   return (
@@ -89,30 +121,36 @@ export default function App() {
         onImport={add}
       />
       <main className="sheet">
-        <Identity {...props} />
-        <div className="tabs" role="tablist" aria-label="Sheet sections">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              id={`tab-${t.id}`}
-              type="button"
-              role="tab"
-              aria-selected={tab === t.id}
-              aria-controls="tab-panel"
-              className={tab === t.id ? "active" : ""}
-              onClick={() => setTab(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <div id="tab-panel" role="tabpanel" aria-labelledby={`tab-${current.id}`}>
-          {/* key resets per-tab form state when switching characters */}
-          <current.Component key={active.id} {...props} />
+        <Identity key={active.id} {...props} />
+        {/* key resets per-section form state when switching characters */}
+        <div className="sheet-body" key={active.id}>
+          <aside className="main-stats">
+            <MainStats {...props} />
+          </aside>
+          <div className="sheet-flow">
+            <Status {...props} />
+            <CombatTab {...props} />
+            <SpellsTab {...props} />
+            <InventoryTab {...props} />
+            <Feats {...props} />
+            <NotesTab {...props} />
+          </div>
         </div>
         <footer className="footer">
-          Saved automatically in this browser. Rules content from the D&amp;D 5e System Reference
-          Document, licensed under CC-BY-4.0.
+          <p>Saved automatically in this browser.</p>
+          <p>
+            This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”)
+            by Wizards of the Coast LLC and available at{" "}
+            <a href="https://dnd.wizards.com/resources/systems-reference-document">
+              https://dnd.wizards.com/resources/systems-reference-document
+            </a>
+            . The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International
+            License available at{" "}
+            <a href="https://creativecommons.org/licenses/by/4.0/legalcode">
+              https://creativecommons.org/licenses/by/4.0/legalcode
+            </a>
+            . Class and feat data via the <a href="https://open5e.com">Open5e</a> API.
+          </p>
         </footer>
       </main>
     </DiceProvider>
